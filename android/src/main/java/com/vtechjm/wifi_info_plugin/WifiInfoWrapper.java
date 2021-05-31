@@ -8,8 +8,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.text.format.Formatter;
 
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
@@ -116,29 +116,61 @@ public class WifiInfoWrapper {
     }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    String getMacAdress() {
+    NetworkInterface getNetworkInterface() {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : all) {
-                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
-
-                byte[] macBytes = nif.getHardwareAddress();
-                if (macBytes == null) {
-                    return "";
+                for (InterfaceAddress ia : nif.getInterfaceAddresses()) {
+                    String ipAdress = ia.getAddress().getHostAddress();
+                    if (wifiInfo != null) {
+                        String ipAddress = formatIP(wifiInfo.getIpAddress());
+                        if (ipAddress.equals(ipAdress)) {
+                            return nif;
+                        }
+                    }
                 }
-
-                StringBuilder res1 = new StringBuilder();
-                for (byte b : macBytes) {
-                    res1.append(Integer.toHexString(b & 0xFF) + ":");
-                }
-
-                if (res1.length() > 0) {
-                    res1.deleteCharAt(res1.length() - 1);
-                }
-                return res1.toString();
             }
         } catch (Exception ex) {
             //handle exception
+        }
+        return null;
+    }
+
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    String getMacAdress(NetworkInterface nif) {
+        try {
+            byte[] macBytes = nif.getHardwareAddress();
+            if (macBytes == null) {
+                return "";
+            }
+
+            StringBuilder res1 = new StringBuilder();
+            for (byte b : macBytes) {
+                res1.append(Integer.toHexString(b & 0xFF) + ":");
+            }
+
+            if (res1.length() > 0) {
+                res1.deleteCharAt(res1.length() - 1);
+            }
+            return res1.toString();
+        } catch (Exception ex) {
+            //handle exception
+        }
+        return "";
+    }
+
+    String getMacAdress() {
+        NetworkInterface nif = getNetworkInterface();
+        if (nif != null) {
+            return getMacAdress(nif);
+        }
+        return "";
+    }
+
+    String getNetworkInterfaceName() {
+        NetworkInterface nif = getNetworkInterface();
+        if (nif != null) {
+            return nif.getName();
         }
         return "";
     }

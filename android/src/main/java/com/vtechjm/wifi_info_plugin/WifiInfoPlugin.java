@@ -53,6 +53,7 @@ public class WifiInfoPlugin implements MethodCallHandler {
                 data.put("FREQUENCY", wifiWrapper.getFrequency());
                 data.put("NETWORKID", wifiWrapper.getNetworkId());
                 data.put("CONNECTIONTYPE", wifiWrapper.getNetworkConnectionType());
+                data.put("INTERFACENAME", wifiWrapper.getNetworkInterfaceName());
                 data.put("ISHIDDEDSSID", wifiWrapper.getHiddenSSID());
                 data.put("ROUTERIP", wifiWrapper.getRouterIp());
                 data.put("DNS1", wifiWrapper.getDns1Ip());

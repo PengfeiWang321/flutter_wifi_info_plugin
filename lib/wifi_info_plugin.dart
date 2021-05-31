@@ -32,6 +32,7 @@ class WifiInfoWrapper {
   int _frequency = 0;
   int _networkid = 0;
   String _connectionType = "missing";
+  String _interfaceName = "missing";
   bool _isHiddenSSID = false;
   String _routerIp = "unknown";
   String _dns1Ip = "";
@@ -54,6 +55,7 @@ class WifiInfoWrapper {
       this._routerIp = nativeInfo["ROUTERIP"];
       this._dns1Ip = nativeInfo["DNS1"];
       this._dns2Ip = nativeInfo["DNS2"];
+      this._interfaceName = nativeInfo["INTERFACENAME"];
     }
   }
 
@@ -116,6 +118,11 @@ class WifiInfoWrapper {
   /// returns connection type eg wifi or mobile
   String get connectionType {
     return this._connectionType;
+  }
+
+  /// returns interface name eg wlan0 or eth0
+  String get interfaceName {
+    return this._interfaceName;
   }
 
   /// return boolean for  ssid  is hidden
